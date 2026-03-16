@@ -20,7 +20,6 @@ from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
-import google.generativeai as genai
 
 # ─────────────────────────────────────────────────────────────
 #  YOUR PROFILE  ← Edit this before deploying
