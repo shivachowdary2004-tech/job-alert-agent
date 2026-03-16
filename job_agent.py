@@ -87,26 +87,58 @@ MY_PREFERENCES = """
 
 # Keywords to search across all job sites
 JOB_KEYWORDS = [
+    # Fresher jobs — Chennai
     "java developer fresher chennai",
     "spring boot fresher chennai",
     "java fresher 2026 chennai",
     "junior java developer chennai",
+    "java internship chennai",
+    # Fresher jobs — Bangalore
     "java developer fresher bangalore",
     "spring boot fresher bangalore",
     "java fresher 2026 bangalore",
     "junior java developer bangalore",
+    "java internship bangalore",
+    # Fresher jobs — Hyderabad
     "java developer fresher hyderabad",
     "spring boot fresher hyderabad",
     "java fresher 2026 hyderabad",
     "junior java developer hyderabad",
+    "java internship hyderabad",
+    # Remote / India-wide
     "java developer fresher remote india",
-    "spring boot developer fresher remote",
+    "software engineer internship java india",
+    # Global MNCs
+    "amazon software engineer fresher india",
+    "google software engineer fresher india",
+    "microsoft software engineer fresher india",
+    "apple software engineer fresher india",
+    "meta software engineer fresher india",
+    "oracle java developer fresher india",
+    "sap java developer fresher india",
+    "ibm java developer fresher india",
+    # Indian IT giants
+    "wipro java fresher",
+    "infosys java fresher",
+    "tcs java fresher",
+    "cognizant java fresher",
+    "accenture java fresher",
+    "capgemini java fresher",
+    "hcl java fresher",
+    "tech mahindra java fresher",
+    # Indian product companies
+    "zoho software engineer fresher",
+    "freshworks software engineer fresher",
+    "flipkart software engineer fresher india",
+    "swiggy software engineer fresher india",
+    "zomato software engineer fresher india",
+    "razorpay software engineer fresher india",
 ]
 
 LOCATION = "India"
 
-# Only alert if AI match score >= this (out of 10)
-MATCH_THRESHOLD = 7
+# Only alert if match score >= this (out of 10)
+MATCH_THRESHOLD = 5
 
 # ─────────────────────────────────────────────────────────────
 #  SECRETS — loaded from environment (GitHub Actions secrets)
@@ -272,12 +304,19 @@ MATCH_KEYWORDS = [
     "java", "spring", "spring boot", "backend", "full stack",
     "fullstack", "software engineer", "python", "mysql", "rest api",
     "j2ee", "microservices", "hibernate", "servlet",
+    "fresher", "fresh graduate", "entry level", "junior", "trainee",
+    "graduate", "0-1", "0-2", "internship", "intern",
+    "amazon", "google", "microsoft", "wipro", "infosys",
+    "tcs", "cognizant", "accenture", "capgemini", "hcl",
+    "tech mahindra", "zoho", "freshworks", "flipkart",
+    "swiggy", "zomato", "razorpay", "oracle", "ibm", "sap",
 ]
 
 # Jobs containing these words will be SKIPPED (senior/irrelevant roles)
 SKIP_KEYWORDS = [
     "senior", "lead", "manager", "director", "architect",
-    "10+ years", "8+ years", "7+ years",
+    "10+ years", "8+ years", "7+ years", "6+ years", "5+ years",
+    "principal", "head of", "vp ", "vice president",
 ]
 
 def score_job(job: dict) -> dict:
