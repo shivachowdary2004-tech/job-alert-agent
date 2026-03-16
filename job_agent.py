@@ -106,7 +106,6 @@ MATCH_THRESHOLD = 7
 #  SECRETS — loaded from environment (GitHub Actions secrets)
 # ─────────────────────────────────────────────────────────────
 
-GEMINI_API_KEY  = os.environ.get("GEMINI_API_KEY", "")
 GMAIL_SENDER    = os.environ.get("GMAIL_SENDER", "")    # your Gmail address
 GMAIL_PASSWORD  = os.environ.get("GMAIL_PASSWORD", "")  # Gmail App Password
 GMAIL_RECEIVER  = os.environ.get("GMAIL_RECEIVER", "")  # where to send alerts
@@ -260,49 +259,44 @@ def fetch_all_jobs() -> list:
     return all_jobs
 
 
-# ── AI Matcher ────────────────────────────────────────────────
+# ── Keyword Matcher (no API needed) ──────────────────────────
+
+# Jobs matching ANY of these keywords in title will trigger an alert
+MATCH_KEYWORDS = [
+    "java", "spring", "spring boot", "backend", "full stack",
+    "fullstack", "software engineer", "python", "mysql", "rest api",
+    "j2ee", "microservices", "hibernate", "servlet",
+]
+
+# Jobs containing these words will be SKIPPED (senior/irrelevant roles)
+SKIP_KEYWORDS = [
+    "senior", "lead", "manager", "director", "architect",
+    "10+ years", "8+ years", "7+ years",
+]
 
 def score_job(job: dict) -> dict:
-    """Ask Gemini to score how well this job matches the profile."""
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+    """Score job using keyword matching — no API needed, always works."""
+    title = job.get("title", "").lower()
+    description = job.get("description", "").lower()
+    combined = title + " " + description
 
-        prompt = f"""You are a job-matching assistant. Score how well this job matches the candidate.
+    # Skip senior/irrelevant roles
+    for skip in SKIP_KEYWORDS:
+        if skip in combined:
+            job["score"]      = 0
+            job["reason"]     = f"Skipped — contains '{skip}'"
+            job["highlights"] = []
+            log.info(f"Skipped '{job['title']}' — senior/irrelevant role")
+            return job
 
-CANDIDATE SKILLS:
-{MY_SKILLS.strip()}
+    # Score based on keyword matches
+    matched = [kw for kw in MATCH_KEYWORDS if kw in combined]
+    score = min(10, len(matched) * 2 + 3)  # base score 3, +2 per keyword match
 
-CANDIDATE PREFERENCES:
-{MY_PREFERENCES.strip()}
-
-JOB:
-Title: {job['title']}
-Company: {job['company']}
-Location: {job['location']}
-Source: {job['source']}
-Description: {job.get('description', 'Not available')[:1000]}
-
-Reply ONLY with valid JSON, no markdown:
-{{"score": <1-10>, "reason": "<one sentence>", "highlights": ["<skill1>", "<skill2>"]}}"""
-
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-        # Strip markdown code fences if Gemini adds them
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        result = json.loads(text.strip())
-        job["score"]      = int(result.get("score", 0))
-        job["reason"]     = result.get("reason", "")
-        job["highlights"] = result.get("highlights", [])
-        log.info(f"Scored '{job['title']}' at {job['source']}: {job['score']}/10")
-    except Exception as e:
-        log.warning(f"AI scoring failed for '{job['title']}': {e}")
-        job["score"]      = 0
-        job["reason"]     = "Scoring unavailable"
-        job["highlights"] = []
+    job["score"]      = score
+    job["reason"]     = f"Matched keywords: {', '.join(matched)}" if matched else "No keywords matched"
+    job["highlights"] = matched[:4]
+    log.info(f"Scored '{job['title']}': {score}/10 — matched: {matched}")
     return job
 
 
@@ -385,7 +379,7 @@ def run():
         log.info("No new jobs found. Done.")
         return
 
-    # 3. Score each new job with AI
+    # 3. Score each new job with keyword matching
     matched_jobs = []
     for job in new_jobs:
         job = score_job(job)
@@ -393,7 +387,6 @@ def run():
         if job["score"] >= MATCH_THRESHOLD:
             matched_jobs.append(job)
             log.info(f"MATCH: '{job['title']}' at {job['company']} — {job['score']}/10")
-        time.sleep(1)  # avoid hitting Gemini rate limit
 
     # 4. Save updated seen list
     save_seen_jobs(seen)
