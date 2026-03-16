@@ -267,7 +267,7 @@ def score_job(job: dict) -> dict:
     """Ask Gemini to score how well this job matches the profile."""
     try:
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
         prompt = f"""You are a job-matching assistant. Score how well this job matches the candidate.
 
