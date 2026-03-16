@@ -87,17 +87,23 @@ MY_PREFERENCES = """
 
 # Keywords to search across all job sites
 JOB_KEYWORDS = [
-    "java developer fresher",
-    "spring boot developer fresher",
-    "software engineer fresher java",
-    "backend developer fresher",
-    "java full stack developer fresher",
-    "junior java developer",
-    "entry level software engineer java",
-    "python developer fresher",
+    "java developer fresher chennai",
+    "spring boot fresher chennai",
+    "java fresher 2026 chennai",
+    "junior java developer chennai",
+    "java developer fresher bangalore",
+    "spring boot fresher bangalore",
+    "java fresher 2026 bangalore",
+    "junior java developer bangalore",
+    "java developer fresher hyderabad",
+    "spring boot fresher hyderabad",
+    "java fresher 2026 hyderabad",
+    "junior java developer hyderabad",
+    "java developer fresher remote india",
+    "spring boot developer fresher remote",
 ]
 
-LOCATION = "Chennai"
+LOCATION = "India"
 
 # Only alert if AI match score >= this (out of 10)
 MATCH_THRESHOLD = 7
