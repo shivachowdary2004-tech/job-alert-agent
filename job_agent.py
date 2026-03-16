@@ -101,7 +101,7 @@ JOB_KEYWORDS = [
 LOCATION = "Chennai"
 
 # Only alert if AI match score >= this (out of 10)
-MATCH_THRESHOLD = 7
+MATCH_THRESHOLD = 5
 
 # ─────────────────────────────────────────────────────────────
 #  SECRETS — loaded from environment (GitHub Actions secrets)
